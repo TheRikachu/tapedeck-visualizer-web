@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script>
+            "use strict";
+
+            const rotate360 = [{ transform: "rotate(360deg)" }];
+
+            const handlePlayPauseButtonClick = () => {
+                const tapedeckIcon = document.getElementById("tapedeck-icon");
+                const rotateAnimation = tapedeckIcon
+                    .getAnimations()
+                    .find((anim) => anim.id === "rotate360");
+                console.log(rotateAnimation);
+
+                /* If the animation is playing, pause it. Otherwise, start/resume playback */
+
+                document
+                    .getElementById("stop-button")
+                    .removeAttribute("disabled");
+
+                switch (rotateAnimation.playState) {
+                    case "idle":
+                        return;
+                    case "paused":
+                        rotateAnimation.play();
+                        return;
+                    case "running":
+                        rotateAnimation.pause();
+                        return;
+                    case "finished":
+                        rotateAnimation.finish();
+                        return;
+                }
+            };
+
+            const handleStopButtonClick = () => {
+                const tapedeckIcon = document.getElementById("tapedeck-icon");
+                /* Cancel the animation, then reaply it paused. */
+                const rotateAnimation = tapedeckIcon
+                    .getAnimations()
+                    .find((anim) => anim.id === "rotate360")
+                    ?.cancel();
+                tapedeckIcon
+                    ?.animate(rotate360, {
+                        duration: 7500,
+                        iterations: Infinity,
+                        id: "rotate360",
+                    })
+                    .pause();
+                document
+                    .getElementById("stop-button")
+                    .setAttribute("disabled", "disabled");
+            };
+
+            const init = () => {
+                console.log("init");
+                const tapedeckIcon = document.getElementById("tapedeck-icon");
+                const rotateAnimation = tapedeckIcon?.animate(rotate360, {
+                    duration: 7500,
+                    iterations: Infinity,
+                    id: "rotate360",
+                });
+                rotateAnimation.pause();
+                document
+                    .getElementById("stop-button")
+                    .setAttribute("disabled", "disabled");
+            };
+
+            window.onload = init;
+        </script>
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            main {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tapedeck-panels {
+                display: grid;
+                grid-template-columns: [left-col] 300px [col-1] 300px [right-col];
+                grid-template-rows: [up-row] 200px [center-row] 100px [down-row];
+                grid-template-areas:
+                    "up-left up-right"
+                    "down-left down-right";
+            }
+
+            .tapedeck-icon-container {
+                margin: 1em;
+            }
+
+            .tapedeck-controls {
+                grid-area: down-left;
+                display: flex;
+                justify-content: center;
+                align-items: stretch;
+            }
+
+            .flex-item {
+                flex: 1 0 auto;
+            }
+        </style>
+    </head>
+
+    <body>
+        <header><h1>Tapedeck visualizer</h1></header>
+        <main>
+            <div class="tapedeck-panels">
+                <div class="tapedeck-controls">
+                    <button
+                        id="play-pause-button"
+                        class="flex-item"
+                        type="button"
+                        onclick="handlePlayPauseButtonClick()"
+                    >
+                        ️⏯️
+                    </button>
+                    <button
+                        id="stop-button"
+                        class="flex-item"
+                        type="button"
+                        onclick="handleStopButtonClick()"
+                    >
+                        ⏹️
+                    </button>
+                </div>
+                <div class="tapedeck-icon-container">
+                    <svg
+                        width="100%"
+                        height="100%"
+                        version="1.1"
+                        viewBox="0 0 120.8 120.8"
+                        xmlns="http://www.w3.org/2000/svg"
+                        id="tapedeck-icon"
+                    >
+                        <path
+                            id="tapedeck-alt-wheel"
+                            d="m60.399 0a60.399 60.399 0 0 0-60.399 60.399 60.399 60.399 0 0 0 60.399 60.399 60.399 60.399 0 0 0 60.399-60.399 60.399 60.399 0 0 0-60.399-60.399zm-40.495 24.472c0.25954-0.0086 0.52566 0.06042 0.76597 0.21578l18.179 11.752c4.6354 2.8863 7.7854 5.3662 7.4439 5.9577l-0.0015 3e-3c-0.18356 0.81688-3.5273 7.2365-3.777 7.669-0.24984 0.43274-4.1428 6.547-4.7544 7.1074l-7.32e-4 7.3e-4c-0.33895 0.58708-4.0064-0.87284-8.7708-3.4083l-19.379-9.924c-0.53547-0.27421-0.79847-0.83825-0.70166-1.3898-0.07822-0.47526 4.158-8.6771 4.4658-9.2102 0.30829-0.53398 5.3096-8.3276 5.7469-8.4743 0.22422-0.18612 0.49969-0.29003 0.78383-0.29938zm80.993 0c0.28744 0.0095 0.56537 0.11558 0.79098 0.30581 0.46709 0.19848 5.434 7.9378 5.7412 8.47 0.30894 0.5351 4.5752 8.7978 4.4651 9.2181 0.0919 0.54834-0.17082 1.1072-0.70309 1.3797l-19.236 9.8504c-4.8323 2.5813-8.5707 4.0776-8.913 3.4847l-1e-3 -3e-3c-0.61675-0.56935-4.5034-6.6729-4.753-7.1052-0.24975-0.43258-3.596-6.8568-3.7777-7.6704l-7.4e-4 -1e-3c-0.33896-0.58711 2.7598-3.0342 7.3382-5.8927l18.283-11.82c0.24032-0.15537 0.50715-0.22434 0.76669-0.21578zm-40.499 56.58c0.4993 0 7.7296 0.3143 8.53 0.56376h4e-3c0.67716 0 1.2463 3.8978 1.4333 9.2824l1.0954 21.763c0.0303 0.60221-0.3287 1.1124-0.85671 1.3033-0.40774 0.30526-9.5912 0.73668-10.206 0.73668-0.61688 0-9.8753-0.43478-10.213-0.74025-0.52253-0.1937-0.87685-0.70131-0.84671-1.2997l1.0882-21.595c0.18104-5.47 0.75356-9.4503 1.4376-9.4503h0.0037c0.80038-0.24946 8.0307-0.56376 8.53-0.56376z"
+                            fill="#b3b3b3"
+                        />
+                        <circle
+                            id="tapedeck-alt-center"
+                            cx="60.399"
+                            cy="60.399"
+                            r="12.607"
+                            fill="#333"
+                        />
+                    </svg>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
